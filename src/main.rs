@@ -2,9 +2,9 @@ use anyhow::{Context, Result, anyhow, bail};
 use clap::{Arg, Command};
 use jsonschema::ValidationError;
 use regex::Regex;
-use serde_json;
 use serde_json::Value;
 use std::collections::HashMap;
+use std::fmt::Write;
 use std::fs;
 use tracing::{debug, error, info};
 
@@ -83,11 +83,11 @@ fn main() -> Result<()> {
         .ok_or_else(|| anyhow!("Input argument is required"))?;
     let env_vars_path = matches
         .get_one::<String>(ARG_ENV_VARS_INPUT)
-        .map(|s| s.as_str());
+        .map(String::as_str);
     let env_secrets_path = matches
         .get_one::<String>(ARG_ENV_SECRETS_INPUT)
-        .map(|s| s.as_str());
-    let output_path = matches.get_one::<String>(ARG_OUTPUT).map(|s| s.as_str());
+        .map(String::as_str);
+    let output_path = matches.get_one::<String>(ARG_OUTPUT).map(String::as_str);
 
     if let Err(e) = run(
         schema_path,
@@ -101,7 +101,7 @@ fn main() -> Result<()> {
         // Print the full error chain
         let mut source = e.source();
         while let Some(err) = source {
-            eprintln!("       Caused by: {}", err);
+            eprintln!("       Caused by: {err}");
             source = err.source();
         }
         std::process::exit(1);
@@ -121,12 +121,15 @@ fn validate_json(schema: &Value, input: &Value) -> Result<()> {
         let mut error_msg = format!("Schema validation failed with {} error(s):", errors.len());
 
         for (i, error) in errors.iter().enumerate() {
-            error_msg.push_str(&format!(
+            // Then change your code to:
+            write!(
+                error_msg,
                 "\n  {}. Path: '{}' - {}",
                 i + 1,
                 error.instance_path,
                 error
-            ));
+            )
+            .unwrap();
         }
 
         bail!(error_msg);
@@ -139,9 +142,9 @@ fn validate_json(schema: &Value, input: &Value) -> Result<()> {
 fn parse_substitutes_from_path(path: Option<&str>) -> Result<Option<HashMap<String, String>>> {
     if let Some(path) = path {
         let content: String =
-            fs::read_to_string(path).with_context(|| format!("Failed to read file: {}", path))?;
+            fs::read_to_string(path).with_context(|| format!("Failed to read file: {path}"))?;
         let json: Value = serde_json::from_str(&content)
-            .with_context(|| format!("Substitutes are not given as valid JSON: {}", path))?;
+            .with_context(|| format!("Substitutes are not given as valid JSON: {path}"))?;
 
         // Check if it's an object and get key count
         if let Some(obj) = json.as_object() {
@@ -157,7 +160,7 @@ fn parse_substitutes_from_path(path: Option<&str>) -> Result<Option<HashMap<Stri
                 map.insert(key.to_lowercase(), string_value);
             }
             info!("Loaded {} substitutes from {}", key_count, path);
-            return Ok(Some(map));
+            Ok(Some(map))
         } else {
             bail!(
                 "Substitutes file must contain a JSON object, not {}",
@@ -167,20 +170,20 @@ fn parse_substitutes_from_path(path: Option<&str>) -> Result<Option<HashMap<Stri
                     Value::Number(_) => "a number",
                     Value::Bool(_) => "a boolean",
                     Value::Null => "null",
-                    _ => "unknown type",
+                    Value::Object(_) => "an object",
                 }
             );
         }
     } else {
         info!("No substitutes were specified");
-        return Ok(None);
+        Ok(None)
     }
 }
 
 fn substitute_values(
     input: &mut Value,
-    env_secrets: &Option<HashMap<String, String>>,
-    env_vars: &Option<HashMap<String, String>>,
+    env_secrets: Option<&HashMap<String, String>>,
+    env_vars: Option<&HashMap<String, String>>,
 ) -> Result<()> {
     let template_regex =
         Regex::new(r"\{\{\s*([^}]+)\s*\}\}").context("Failed to compile template regex")?;
@@ -191,8 +194,8 @@ fn substitute_values(
 
 fn substitute_recursive(
     value: &mut Value,
-    env_secrets: &Option<HashMap<String, String>>,
-    env_vars: &Option<HashMap<String, String>>,
+    env_secrets: Option<&HashMap<String, String>>,
+    env_vars: Option<&HashMap<String, String>>,
     regex: &Regex,
     json_path: &str,
 ) -> Result<()> {
@@ -212,16 +215,16 @@ fn substitute_recursive(
         Value::Object(obj) => {
             for (key, v) in obj.iter_mut() {
                 let new_path = if json_path == "$" {
-                    format!("$.{}", key)
+                    format!("$.{key}")
                 } else {
-                    format!("{}.{}", json_path, key)
+                    format!("{json_path}.{key}")
                 };
                 substitute_recursive(v, env_secrets, env_vars, regex, &new_path)?;
             }
         }
         Value::Array(arr) => {
             for (index, item) in arr.iter_mut().enumerate() {
-                let new_path = format!("{}[{}]", json_path, index);
+                let new_path = format!("{json_path}[{index}]");
                 substitute_recursive(item, env_secrets, env_vars, regex, &new_path)?;
             }
         }
@@ -232,8 +235,8 @@ fn substitute_recursive(
 
 fn substitute_string(
     s: &str,
-    env_secrets: &Option<HashMap<String, String>>,
-    env_vars: &Option<HashMap<String, String>>,
+    env_secrets: Option<&HashMap<String, String>>,
+    env_vars: Option<&HashMap<String, String>>,
     regex: &Regex,
     json_path: &str,
 ) -> Result<String> {
@@ -302,9 +305,9 @@ fn run(
 ) -> Result<()> {
     // Read actual files
     let schema = fs::read_to_string(schema_path)
-        .with_context(|| format!("Failed to read schema file: {}", schema_path))?;
+        .with_context(|| format!("Failed to read schema file: {schema_path}"))?;
     let input = fs::read_to_string(input_path)
-        .with_context(|| format!("Failed to read input file: {}", input_path))?;
+        .with_context(|| format!("Failed to read input file: {input_path}"))?;
 
     // Substitutes can be used to produce the final JSON output later (this is the JSON that gets validated)
     info!("Parsing environment variable substitutes");
@@ -314,26 +317,30 @@ fn run(
 
     // Convert to JSON
     let schema: Value = serde_json::from_str(&schema)
-        .with_context(|| format!("Schema file is not valid JSON: {}", schema_path))?;
+        .with_context(|| format!("Schema file is not valid JSON: {schema_path}"))?;
     let mut input: Value = serde_json::from_str(&input)
-        .with_context(|| format!("Input file is not valid JSON: {}", input_path))?;
+        .with_context(|| format!("Input file is not valid JSON: {input_path}"))?;
+
+    // Convert &option<hashmasp> to option<&hashmap>
+    let env_vars = env_vars.as_ref().map(|m| m as &HashMap<String, String>);
+    let env_secrets = env_secrets.as_ref().map(|m| m as &HashMap<String, String>);
 
     info!("Scanning for substitution placeholders");
-    substitute_values(&mut input, &env_secrets, &env_vars)?;
+    substitute_values(&mut input, env_secrets, env_vars)?;
     info!("Substitutions succeeded, performing schema validation");
     validate_json(&schema, &input)?;
     info!("Validation successful");
 
     // Write to output file if specified
     if let Some(output_path) = output_path {
-        info!("Writing validated JSON to output file: {}", output_path);
+        info!("Writing validated JSON to output file: {output_path}");
 
         let pretty_json =
             serde_json::to_string_pretty(&input).context("Failed to serialize JSON for output")?;
 
         let len = pretty_json.len();
         fs::write(output_path, pretty_json)
-            .with_context(|| format!("Failed to write output file: {}", output_path))?;
+            .with_context(|| format!("Failed to write output file: {output_path}"))?;
 
         info!(
             "Successfully wrote output JSON ({} bytes) to {}",
