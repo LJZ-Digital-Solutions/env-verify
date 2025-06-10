@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.2.1...v0.2.2) (2025-06-10)
+
+
+### Bug Fixes
+
+* rerun release build on every action ([88ab258](https://github.com/LJZ-Digital-Solutions/env-verify/commit/88ab25864eabed92852e741362fe1a51e1842208))
+
 ## [0.2.1](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.2.0...v0.2.1) (2025-06-10)
 
 
