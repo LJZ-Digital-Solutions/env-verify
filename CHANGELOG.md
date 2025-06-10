@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.1.0...v0.2.0) (2025-06-10)
+
+
+### Features
+
+* add release build workflow ([692c514](https://github.com/LJZ-Digital-Solutions/env-verify/commit/692c514927e40f9ed854eab47cef9192022e225a))
+
 ## 0.1.0 (2025-06-10)
 
 
