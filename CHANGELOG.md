@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.2.2...v0.3.0) (2025-06-10)
+
+
+### Features
+
+* use cross for build artifacts ([5b4d58b](https://github.com/LJZ-Digital-Solutions/env-verify/commit/5b4d58b7eb8668ba652fe09344f80a4312750c5f))
+
 ## [0.2.2](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.2.1...v0.2.2) (2025-06-10)
 
 
