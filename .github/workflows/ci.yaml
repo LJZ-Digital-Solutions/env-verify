@@ -1,4 +1,4 @@
-name: CI - security and testing
+name: Lint, Testing and Security Audit
 
 on:
   push:
