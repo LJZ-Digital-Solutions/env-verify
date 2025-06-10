@@ -1,6 +1,6 @@
 [package]
 name = "env-verify"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 authors = ["Elias Groot <github@ielaajez.com>"]
 description = "Convert YAML to JSON with optional schema validation"
