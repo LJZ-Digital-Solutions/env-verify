@@ -22,6 +22,10 @@ inputs:
     description: 'Version of env-verify to use (defaults to latest)'
     required: false
     default: 'latest'
+  repository:
+    description: 'Repository to download env-verify from'
+    required: false
+    default: 'LJZ-Digital-Solutions/env-verify'
 
 runs:
   using: 'composite'
@@ -48,13 +52,13 @@ runs:
       id: release
       run: |
         if [ "${{ inputs.version }}" = "latest" ]; then
-          RELEASE_INFO=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          RELEASE_INFO=$(curl -s https://api.github.com/repos/${{ inputs.repository }}/releases/latest)
           VERSION=$(echo "$RELEASE_INFO" | jq -r '.tag_name')
         else
           VERSION="${{ inputs.version }}"
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "download-url=https://github.com/${{ github.repository }}/releases/download/$VERSION/env-verify-${{ steps.arch.outputs.target }}.zip" >> $GITHUB_OUTPUT
+        echo "download-url=https://github.com/${{ inputs.repository }}/releases/download/$VERSION/env-verify-${{ steps.arch.outputs.target }}.zip" >> $GITHUB_OUTPUT
 
     - name: Download and extract binary
       shell: bash
