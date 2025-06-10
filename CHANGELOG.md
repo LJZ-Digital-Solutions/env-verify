@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.3.0...v0.4.0) (2025-06-10)
+
+
+### Features
+
+* simpler build upload ([a673ff6](https://github.com/LJZ-Digital-Solutions/env-verify/commit/a673ff652bafd8bc8e4a8b22761fd48c6712cb39))
+
 ## [0.3.0](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.2.2...v0.3.0) (2025-06-10)
 
 
