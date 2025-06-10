@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.2.0...v0.2.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* correct trigger for build on release ([50c18fb](https://github.com/LJZ-Digital-Solutions/env-verify/commit/50c18fbf306320015409e032ce70b77e60ed9b2a))
+
 ## [0.2.0](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.1.0...v0.2.0) (2025-06-10)
 
 
