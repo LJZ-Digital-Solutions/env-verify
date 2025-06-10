@@ -1,0 +1,6 @@
+{
+    "foo": "bar",
+    "bar": "secret-first",
+    "val1": "hi env-subst",
+    "val2": "hi secret-subst"
+}

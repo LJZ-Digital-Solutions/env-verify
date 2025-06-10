@@ -1,0 +1,25 @@
+{
+  "name": "Rust",
+  "build": {
+    "dockerfile": "./Dockerfile",
+    "context": "..",
+    "options": [
+      "--network=host"
+    ]
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/dev,type=bind",
+  "workspaceFolder": "/workspace/dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer", // Rust language server
+        "tamasfe.even-better-toml", // TOML syntax support
+        "ms-vscode.makefile-tools", // Makefile Tools extension
+        "dbankier.vscode-quick-select" // Quick select with cmd/ctrl+k "
+      ]
+    }
+  },
+  "runArgs": [
+    "--network=host"
+  ]
+}

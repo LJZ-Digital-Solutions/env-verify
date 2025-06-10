@@ -1,0 +1,4 @@
+{
+    "sub1": "env-first",
+    "sub2": "env-subst"
+}

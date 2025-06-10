@@ -1,0 +1,6 @@
+{
+    "foo": "bar",
+    "bar": "{{ sub1 }}",
+    "val1": "hi {{ sub2 }}",
+    "val2": "hi {{ sub3 }}"
+}

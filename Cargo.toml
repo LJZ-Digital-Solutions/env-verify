@@ -1,0 +1,19 @@
+[package]
+name = "env-verify"
+version = "0.1.1"
+edition = "2024"
+authors = ["Elias Groot <github@ielaajez.com>"]
+description = "Convert YAML to JSON with optional schema validation"
+
+[dependencies]
+tracing = "0.1.41"
+clap = { version = "4.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+jsonschema = "0.30"
+anyhow = "1.0.98"
+tracing-subscriber = "0.3"
+regex = "1.11.1"
+
+[dev-dependencies]
+tempfile = "3.20.0"
