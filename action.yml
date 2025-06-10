@@ -1,0 +1,103 @@
+name: 'Verify Environment'
+description: 'Validate JSON files against schemas with environment variable substitution'
+author: 'LJZ Digital Solutions B.V.'
+
+inputs:
+  schema:
+    description: 'Path to JSON schema to validate against'
+    required: true
+  input:
+    description: 'Path to input JSON file that needs to be validated'
+    required: true
+  env-vars:
+    description: 'Environment variables as JSON object'
+    required: false
+  env-secrets:
+    description: 'Environment secrets as JSON object'
+    required: false
+  output:
+    description: 'Path to write the validated and substituted JSON to'
+    required: false
+  version:
+    description: 'Version of env-verify to use (defaults to latest)'
+    required: false
+    default: 'latest'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Determine runner architecture
+      shell: bash
+      id: arch
+      run: |
+        case "${{ runner.os }}-${{ runner.arch }}" in
+          Linux-X64)
+            echo "target=x86_64-unknown-linux-gnu" >> $GITHUB_OUTPUT
+            ;;
+          Linux-ARM64)
+            echo "target=aarch64-unknown-linux-gnu" >> $GITHUB_OUTPUT
+            ;;
+          *)
+            echo "::error::Unsupported platform: ${{ runner.os }}-${{ runner.arch }}. Only Linux x64 and ARM64 are supported."
+            exit 1
+            ;;
+        esac
+
+    - name: Get latest release info
+      shell: bash
+      id: release
+      run: |
+        if [ "${{ inputs.version }}" = "latest" ]; then
+          RELEASE_INFO=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          VERSION=$(echo "$RELEASE_INFO" | jq -r '.tag_name')
+        else
+          VERSION="${{ inputs.version }}"
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "download-url=https://github.com/${{ github.repository }}/releases/download/$VERSION/env-verify-${{ steps.arch.outputs.target }}.zip" >> $GITHUB_OUTPUT
+
+    - name: Download and extract binary
+      shell: bash
+      run: |
+        curl -L "${{ steps.release.outputs.download-url }}" -o env-verify.zip
+        unzip env-verify.zip
+        chmod +x env-verify-${{ steps.arch.outputs.target }}
+        mv env-verify-${{ steps.arch.outputs.target }} env-verify
+
+    - name: Create environment files
+      shell: bash
+      run: |
+        # Create env-vars file if provided
+        if [ -n "${{ inputs.env-vars }}" ]; then
+          echo '${{ inputs.env-vars }}' > env-vars.json
+        fi
+        
+        # Create env-secrets file if provided
+        if [ -n "${{ inputs.env-secrets }}" ]; then
+          echo '${{ inputs.env-secrets }}' > env-secrets.json
+        fi
+
+    - name: Run env-verify
+      shell: bash
+      run: |
+        ARGS="--schema '${{ inputs.schema }}' --input '${{ inputs.input }}'"
+        
+        if [ -f env-vars.json ]; then
+          ARGS="$ARGS --env-vars env-vars.json"
+        fi
+        
+        if [ -f env-secrets.json ]; then
+          ARGS="$ARGS --env-secrets env-secrets.json"
+        fi
+        
+        if [ -n "${{ inputs.output }}" ]; then
+          ARGS="$ARGS --output '${{ inputs.output }}'"
+        fi
+        
+        eval "./env-verify $ARGS"
+
+    - name: Cleanup temporary files
+      shell: bash
+      if: always()
+      run: |
+        rm -f env-verify env-verify.zip env-vars.json env-secrets.json
