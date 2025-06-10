@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.4.0...v0.4.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* correct release asset upload action ([25fd057](https://github.com/LJZ-Digital-Solutions/env-verify/commit/25fd0578b4409d8924aabf578df63fe4d649ce6a))
+
 ## [0.4.0](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.3.0...v0.4.0) (2025-06-10)
 
 
