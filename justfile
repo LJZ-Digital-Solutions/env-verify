@@ -7,7 +7,7 @@ format:
     @cargo fmt
 
 lint: format
-    @cargo clippy -- -W clippy::pedantic
+    @cargo clippy --all-targets --all-features -- -D warnings -D clippy::pedantic
 
 build: lint
     @cargo build
