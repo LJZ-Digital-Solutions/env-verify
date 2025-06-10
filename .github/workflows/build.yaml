@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 env:
   CARGO_TERM_COLOR: always
@@ -22,6 +21,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Get release tag
+        run: echo "RELEASE_TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -48,12 +50,10 @@ jobs:
           
           cp "target/${target}/release/${binary_name}" "${archive_name}"
           zip "${archive_name}.zip" "${archive_name}"
-          echo "ARCHIVE_NAME=${archive_name}.zip" >> $GITHUB_ENV
 
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+      - name: Upload Release Assets
+        uses: AButler/upload-release-assets@v3.0
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ env.ARCHIVE_NAME }}
-          asset_name: ${{ env.ARCHIVE_NAME }}
-          asset_content_type: application/zip
+          files: "env-verify-${{ matrix.target }}.zip"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          release-tag: ${{ env.RELEASE_TAG }}
