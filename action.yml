@@ -1,6 +1,6 @@
-name: 'Verify Environment'
+name: 'Environment Verify'
 description: 'Validate JSON files against schemas with environment variable substitution'
-author: 'LJZ Digital Solutions B.V.'
+author: 'Your Name'
 
 inputs:
   schema:
@@ -70,15 +70,18 @@ runs:
 
     - name: Create environment files
       shell: bash
+      env:
+        ENV_VARS_INPUT: ${{ inputs.env-vars }}
+        ENV_SECRETS_INPUT: ${{ inputs.env-secrets }}
       run: |
         # Create env-vars file if provided
-        if [ -n "${{ inputs.env-vars }}" ]; then
-          echo '${{ inputs.env-vars }}' > env-vars.json
+        if [[ -n "${ENV_VARS_INPUT}" ]]; then
+          echo "${ENV_VARS_INPUT}" > env-vars.json
         fi
         
         # Create env-secrets file if provided
-        if [ -n "${{ inputs.env-secrets }}" ]; then
-          echo '${{ inputs.env-secrets }}' > env-secrets.json
+        if [[ -n "${ENV_SECRETS_INPUT}" ]]; then
+          echo "${ENV_SECRETS_INPUT}" > env-secrets.json
         fi
 
     - name: Run env-verify
