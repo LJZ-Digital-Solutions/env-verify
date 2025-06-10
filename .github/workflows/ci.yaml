@@ -43,9 +43,6 @@ jobs:
       - name: Run tests
         run: cargo test --all-features --verbose
 
-      - name: Build release
-        run: cargo build --release --all-features
-
   security:
     name: Security Audit
     runs-on: ubuntu-latest

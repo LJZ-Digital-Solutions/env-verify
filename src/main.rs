@@ -549,7 +549,13 @@ mod tests {
         if !failures.is_empty() {
             let mut error_msg = format!("{} test case(s) failed:\n", failures.len());
             for (name, error) in failures {
-                error_msg.push_str(&format!("  - {}: {}\n", name, error));
+                writeln!(
+                    error_msg,
+                    "  - {}: {}",
+                    name,
+                    error.to_string().replace('\n', "\n    ")
+                )
+                .unwrap();
             }
             bail!(error_msg);
         }
