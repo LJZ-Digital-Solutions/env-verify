@@ -309,6 +309,13 @@ fn run(
     let input = fs::read_to_string(input_path)
         .with_context(|| format!("Failed to read input file: {input_path}"))?;
 
+    // Error if the output path already exists
+    if let Some(output_path) = output_path {
+        if fs::metadata(output_path).is_ok() {
+            bail!("Output file '{output_path}' already exists. Will not overwrite");
+        }
+    }
+
     // Substitutes can be used to produce the final JSON output later (this is the JSON that gets validated)
     info!("Parsing environment variable substitutes");
     let env_vars = parse_substitutes_from_path(env_vars_path)?;
