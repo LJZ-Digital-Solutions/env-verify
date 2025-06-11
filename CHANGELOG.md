@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.4.1...v0.5.0) (2025-06-11)
+
+
+### Features
+
+* added README examples and tests ([766a985](https://github.com/LJZ-Digital-Solutions/env-verify/commit/766a98508b1cc041a05832849a390c240b508889))
+* do not overwrite output file if it already exists ([8d05fc4](https://github.com/LJZ-Digital-Solutions/env-verify/commit/8d05fc4d69045d62e4a6ad37872c60143a74abf8))
+* publish as reusable github action step ([5f05f81](https://github.com/LJZ-Digital-Solutions/env-verify/commit/5f05f814a342d924de7c7c282bed99133ea2e139))
+
+
+### Bug Fixes
+
+* string comparison for json setting ([06cb5d3](https://github.com/LJZ-Digital-Solutions/env-verify/commit/06cb5d36181d5b5f3907e59d153c696b7eb3701f))
+* use correct repository for downloading zip ([c97e22e](https://github.com/LJZ-Digital-Solutions/env-verify/commit/c97e22ec43e6105b8c851f2db8b0201e3875a964))
+
 ## [0.4.1](https://github.com/LJZ-Digital-Solutions/env-verify/compare/v0.4.0...v0.4.1) (2025-06-10)
 
 
