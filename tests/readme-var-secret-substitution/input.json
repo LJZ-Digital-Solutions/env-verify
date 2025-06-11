@@ -1,0 +1,7 @@
+{
+    "host": "{{ db_host }}",
+    "port": 5432,
+    "username": "{{ db_user }}",
+    "password": "{{ db_password }}",
+    "ssl_enabled": true
+}

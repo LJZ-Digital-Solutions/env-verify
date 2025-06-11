@@ -1,0 +1,7 @@
+{
+    "host": "prod.database.company.com",
+    "port": 5432,
+    "username": "dev_user",
+    "password": "super_secure_prod_password_123!",
+    "ssl_enabled": true
+}

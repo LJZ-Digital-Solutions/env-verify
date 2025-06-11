@@ -1,0 +1,5 @@
+{
+    "app_name": "my-service",
+    "debug": true,
+    "port": 8080
+}

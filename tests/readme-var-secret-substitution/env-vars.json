@@ -1,0 +1,5 @@
+{
+    "db_host": "localhost",
+    "db_user": "dev_user",
+    "db_password": "weak_password"
+}

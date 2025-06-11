@@ -1,0 +1,5 @@
+{
+    "environment": "{{ deploy_env }}",
+    "version": "{{ release_tag }}",
+    "branch": "{{ github_ref }}"
+}

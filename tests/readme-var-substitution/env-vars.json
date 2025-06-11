@@ -1,0 +1,5 @@
+{
+    "deploy_env": "production",
+    "release_tag": "v1.2.3",
+    "github_ref": "main"
+}
